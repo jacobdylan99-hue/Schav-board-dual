@@ -104,7 +104,8 @@
   .block.free{background:var(--free-soft);color:var(--free-ink);border:1px solid color-mix(in srgb,var(--free) 30%,transparent);box-shadow:inset 3px 0 0 var(--free)}
   .block.busy{background:var(--busy);color:var(--busy-ink);background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.18) 0 6px,transparent 6px 12px)}
   .block.cust{background:var(--cust);color:var(--cust-ink);box-shadow:inset 3px 0 0 var(--cust-bar)}
-  .block.ooo{background:var(--ooo);color:var(--ooo-ink);box-shadow:inset 3px 0 0 var(--ooo-bar);background-image:repeating-linear-gradient(45deg,color-mix(in srgb,var(--ooo-bar) 16%,transparent) 0 6px,transparent 6px 12px)}
+  .block.ooo{background:var(--ooo);color:var(--ooo-ink);box-shadow:inset 4px 0 0 var(--ooo-bar);background-image:repeating-linear-gradient(45deg,color-mix(in srgb,var(--ooo-bar) 16%,transparent) 0 6px,transparent 6px 12px)}
+  .block.ooo .lbl{font-size:18px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
   .block.tent{border:1.5px dashed currentColor;background-image:repeating-linear-gradient(45deg, color-mix(in srgb, currentColor 24%, transparent) 0 5px, transparent 5px 10px), repeating-linear-gradient(-45deg, color-mix(in srgb, currentColor 24%, transparent) 0 5px, transparent 5px 10px)}
   .block .lbl{padding:2px 6px;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:break-word;text-align:center;line-height:1.22}
   .block .lbl-loc{display:block;font-weight:400;font-size:.92em;opacity:.82;margin-top:2px}
@@ -465,7 +466,10 @@ function renderCol(elId, person, dayKey){
       el.style.right="auto";
     }
     const range=fmt(b.s)+'–'+fmt(b.e);
-    let html='<span class="lbl">'+esc(text)+' · '+range, tip=text+' · '+range;
+    // for a full-window leave the 9–6 range is redundant; only show a time when the leave sits partway into the window (half-day / boundary)
+    const showRange = !(cls.indexOf("ooo")!==-1 && b.s<=DAY_START+1e-9 && b.e>=DAY_END-1e-9);
+    const core=esc(text)+(showRange?' · '+range:''), tipCore=text+(showRange?' · '+range:'');
+    let html='<span class="lbl">'+core, tip=tipCore;
     if(b.loc && cls.indexOf("cust")!==-1){ html+='<span class="lbl-loc">'+esc(b.loc)+'</span>'; tip+=' · '+b.loc; }
     html+='</span>';
     el.title=tip;            // full, untruncated text on hover (covers any clipped label)
